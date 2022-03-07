@@ -31,14 +31,12 @@ const App = () => {
         : description.toLowerCase().includes(s.toLowerCase())
     );
 
-    setFData(filtered);
+    setData(filtered);
   };
-
-  const dataToFilter = (): Jobs => (fdata.length ? fdata : data);
 
   const sortBy = (type: string): void => {
     // eslint-disable-next-line array-callback-return
-    const filtered = dataToFilter().sort((a, b): any => {
+    const filtered = backup.sort((a, b): any => {
       if (type === "asc")
         return moment(a.publication_date).diff(b.publication_date);
       else if (type === "desc")
