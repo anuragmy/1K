@@ -3,6 +3,7 @@ import React from "react";
 import { List, Avatar, Space, Card } from "antd";
 import { RightCircleFilled } from "@ant-design/icons";
 import { getFormattedDate, showTotal } from "../api";
+import { Grid } from "@mui/material";
 
 const JobsCards: React.FC<any | Jobs> = ({ jobs }) => {
   return (
@@ -24,7 +25,10 @@ const JobsCards: React.FC<any | Jobs> = ({ jobs }) => {
       }
       renderItem={(item: Job) => (
         <Card
-          style={{ margin: "24px 0px", boxShadow: "0 0 5px rgba(0,0,0,0.5)" }}
+          style={{
+            margin: "24px 0px",
+            boxShadow: "0 0 5px rgba(0,0,0,0.5)",
+          }}
           bordered
           extra={getFormattedDate(item.publication_date)}
         >
@@ -34,7 +38,7 @@ const JobsCards: React.FC<any | Jobs> = ({ jobs }) => {
               <a href={item.url} target="_blank">
                 <Space>
                   {React.createElement(RightCircleFilled)}
-                  "Apply Now"
+                  Apply Now
                 </Space>
               </a>,
             ]}

@@ -5,9 +5,11 @@ import { Container, Grid } from "@material-ui/core";
 
 import SearchJobs from "./components/Search";
 import JobsCards from "./components/JobsCards";
+import moment from "moment";
 
 const App = () => {
   const [data, setData] = useState<Jobs>([]);
+  const [fdata, setFData] = useState<Jobs>([]);
   const [backup, setBackup] = useState<Jobs>([]);
 
   const getData = async () => {
@@ -29,27 +31,21 @@ const App = () => {
         : description.toLowerCase().includes(s.toLowerCase())
     );
 
-    setData(filtered);
+    setFData(filtered);
   };
 
+  const dataToFilter = (): Jobs => (fdata.length ? fdata : data);
+
   const sortBy = (type: string): void => {
-    console.log("🚀 ~ file: App.tsx ~ line 36 ~ sortBy ~ type", type);
     // eslint-disable-next-line array-callback-return
-    const filtered = data.sort((a, b): any => {
+    const filtered = dataToFilter().sort((a, b): any => {
       if (type === "asc")
-        return (
-          new Date(a.publication_date).valueOf() -
-          new Date(b.publication_date).valueOf()
-        );
+        return moment(a.publication_date).diff(b.publication_date);
       else if (type === "desc")
-        return (
-          new Date(b.publication_date).valueOf() -
-          new Date(a.publication_date).valueOf()
-        );
+        return moment(b.publication_date).diff(a.publication_date);
     });
 
-    setData(filtered);
-    console.log("🚀 ~ file: App.tsx ~ line 46 ~ sortBy ~ filtered", filtered);
+    setFData(filtered);
   };
 
   return (
@@ -64,7 +60,7 @@ const App = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <JobsCards jobs={data} />
+          <JobsCards jobs={fdata.length ? fdata : data} />
         </Grid>
       </Grid>
     </Container>
