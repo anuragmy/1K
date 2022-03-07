@@ -20,7 +20,7 @@ type Jobs = Job[];
 
 interface FuncProps {
 
-    searchData: (type: string, values: string) => void;
+    searchData: (values: string) => void;
     sortBy: (type: string) => void;
 
 

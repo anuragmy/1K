@@ -6,33 +6,39 @@ import { Container, Grid } from "@material-ui/core";
 import SearchJobs from "./components/Search";
 import JobsCards from "./components/JobsCards";
 import moment from "moment";
+import Spinner from "./components/Spinner";
+import { Typography } from "antd";
+const { Title } = Typography;
 
 const App = () => {
   const [data, setData] = useState<Jobs>([]);
-  const [fdata, setFData] = useState<Jobs>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [backup, setBackup] = useState<Jobs>([]);
+  const [searchString, setSearchString] = useState<string>("");
 
-  const getData = async () => {
-    const jobs = await fetchData();
+  const getData = async (s: string = "") => {
+    const jobs = await fetchData(s);
+    setLoading(false);
     setData(jobs?.jobs);
     setBackup(jobs?.jobs);
   };
 
   useEffect(() => {
+    setLoading(true);
     getData();
   }, []);
 
-  const searchData = (type: string, s: string) => {
-    if (!s) return setData(backup);
+  useEffect(() => {
+    let time: any;
+    if (searchString.length >= 3) {
+      setLoading(true);
+      setData([]);
+      time = setTimeout(() => getData(searchString), 2000);
+    } else getData();
+    return () => clearTimeout(time);
+  }, [searchString]);
 
-    const filtered = data.filter(({ company_name, description }: any) =>
-      type === "name"
-        ? company_name.toLowerCase().includes(s.toLowerCase())
-        : description.toLowerCase().includes(s.toLowerCase())
-    );
-
-    setData(filtered);
-  };
+  const searchData = (s: string) => setSearchString(s);
 
   const sortBy = (type: string): void => {
     // eslint-disable-next-line array-callback-return
@@ -43,7 +49,7 @@ const App = () => {
         return moment(b.publication_date).diff(a.publication_date);
     });
 
-    setFData(filtered);
+    setData(filtered);
   };
 
   return (
@@ -51,14 +57,22 @@ const App = () => {
       <h1>React Jobs</h1>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <SearchJobs
-            searchData={(type, s) => searchData(type, s)}
-            sortBy={sortBy}
-          />
+          <SearchJobs searchData={(s) => searchData(s)} sortBy={sortBy} />
         </Grid>
 
         <Grid item xs={12}>
-          <JobsCards jobs={fdata.length ? fdata : data} />
+          {loading ? (
+            <>
+              <Spinner />
+              <Spinner />
+              <Spinner />
+            </>
+          ) : (
+            <>
+              <Title level={2}>Total Jobs found: {data.length} </Title>
+              <JobsCards jobs={data} s={searchString} />
+            </>
+          )}
         </Grid>
       </Grid>
     </Container>

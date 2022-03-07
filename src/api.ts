@@ -1,7 +1,10 @@
-const url = `https://remotive.io/api/remote-jobs?limit=${200}`;
 
 
-export const fetchData = async () => await (await fetch(url)).json();
+export const fetchData = async (s: string = '') => {
+    const url = `https://remotive.io/api/remote-jobs?search=${s}&limit=${100}`;
+
+    return await (await fetch(url)).json();
+}
 export const getFormattedDate: any = (date: any) => {
     const d = new Date(date);
     let year = d.getFullYear();

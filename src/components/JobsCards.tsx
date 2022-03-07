@@ -3,9 +3,9 @@ import React from "react";
 import { List, Avatar, Space, Card } from "antd";
 import { RightCircleFilled } from "@ant-design/icons";
 import { getFormattedDate, showTotal } from "../api";
-import { Grid } from "@mui/material";
+import Highlight from "react-highlighter";
 
-const JobsCards: React.FC<any | Jobs> = ({ jobs }) => {
+const JobsCards: React.FC<any | Jobs> = ({ jobs, s }) => {
   return (
     <List
       itemLayout="vertical"
@@ -48,7 +48,10 @@ const JobsCards: React.FC<any | Jobs> = ({ jobs }) => {
               title={<a href={item.url}>{item.company_name}</a>}
               description={item.title}
             />
-            <div dangerouslySetInnerHTML={{ __html: item.description }} />
+            <Highlight
+              search={s}
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            ></Highlight>
           </List.Item>
         </Card>
       )}
