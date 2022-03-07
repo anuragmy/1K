@@ -20,7 +20,7 @@ type Jobs = Job[];
 
 interface FuncProps {
 
-    searchData: (values: string) => void;
+    searchData: (type: string, values: string, limit: number) => void;
     sortBy: (type: string) => void;
 
 
@@ -28,4 +28,7 @@ interface FuncProps {
 
 
 
+interface FetchDataProps {
+    s?: string = '', name?: string = '', category?: string = '', limit?: number = 0,
+}
 

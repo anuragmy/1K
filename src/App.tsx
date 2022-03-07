@@ -13,11 +13,18 @@ const { Title } = Typography;
 const App = () => {
   const [data, setData] = useState<Jobs>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [jobLimit, setLimit] = useState<number>(0);
   const [backup, setBackup] = useState<Jobs>([]);
   const [searchString, setSearchString] = useState<string>("");
+  const [searchType, setSearchType] = useState<string>("");
+  console.log(
+    "🚀 ~ file: App.tsx ~ line 19 ~ App ~ searchType",
+    searchType,
+    searchString
+  );
 
-  const getData = async (s: string = "") => {
-    const jobs = await fetchData(s);
+  const getData = async (props: any) => {
+    const jobs = await fetchData(props);
     setLoading(false);
     setData(jobs?.jobs);
     setBackup(jobs?.jobs);
@@ -25,20 +32,34 @@ const App = () => {
 
   useEffect(() => {
     setLoading(true);
-    getData();
+    getData({});
   }, []);
 
   useEffect(() => {
     let time: any;
+    const propsToPass: any = {};
     if (searchString.length >= 3) {
       setLoading(true);
       setData([]);
-      time = setTimeout(() => getData(searchString), 2000);
-    } else getData();
-    return () => clearTimeout(time);
-  }, [searchString]);
+      if (searchType === "name") propsToPass.name = searchString;
+      if (searchType === "titledesc") propsToPass.s = searchString;
+      if (searchType === "category") propsToPass.category = searchString;
+      if (jobLimit) propsToPass.limit = jobLimit;
+      time = setTimeout(() => getData(propsToPass), 2000);
+    } else if (!searchString.length) {
+      setLoading(true);
+      getData({});
+    }
 
-  const searchData = (s: string) => setSearchString(s);
+    return () => clearTimeout(time);
+  }, [searchType, searchString]);
+
+  const searchData = (type: string, s: string, limit: number) => {
+    console.log("🚀 ~ file: App.tsx ~ line 50 ~ searchData ~ type", type);
+    setSearchType(type);
+    setSearchString(s);
+    setLimit(limit);
+  };
 
   const sortBy = (type: string): void => {
     // eslint-disable-next-line array-callback-return
@@ -57,7 +78,10 @@ const App = () => {
       <h1>React Jobs</h1>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <SearchJobs searchData={(s) => searchData(s)} sortBy={sortBy} />
+          <SearchJobs
+            searchData={(type, s, limit) => searchData(type, s, limit)}
+            sortBy={sortBy}
+          />
         </Grid>
 
         <Grid item xs={12}>
